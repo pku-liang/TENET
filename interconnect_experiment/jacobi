@@ -1,0 +1,5 @@
+jacobi2d.s 2
+1
+1d_interconnects jacobi_lineral_os.m
+1
+2d_interconnects jacobi_os_yxp.m

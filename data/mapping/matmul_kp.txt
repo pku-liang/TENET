@@ -1,2 +1,0 @@
-{S[i,j,k]->PE[k%64]}
-{S[i,j,k]->T[floor(k/64),i,j]}

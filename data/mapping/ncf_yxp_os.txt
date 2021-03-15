@@ -1,2 +1,0 @@
-{S[i,j,k]->PE[j%8]}
-{S[i,j,k]->T[floor(j/8),i,k]}

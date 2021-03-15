@@ -1,2 +1,0 @@
-{S[k,c,ox,oy,rx,ry]->PE[(3*c+rx)%8]}
-{S[k,c,ox,oy,rx,ry]->T[k,ox,floor((3*c+rx)/8),oy]}

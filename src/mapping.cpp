@@ -26,6 +26,7 @@ const Mapping& Mapping::operator=(const Mapping& mp)
 		isl_union_map_free(space_map);
 	time_map = isl_union_map_copy(mp.time_map);
 	space_map = isl_union_map_copy(mp.space_map);
+    return *this;
 }
 
 Mapping::~Mapping()

@@ -1,0 +1,3 @@
+mttkrp.s 1
+3
+2d_interconnects mttkrp_systolic1.m mttkrp_systolic2.m mttkrp_systolic3.m

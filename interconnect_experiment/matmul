@@ -1,0 +1,5 @@
+matmul.s 2
+2
+1d_interconnects ncf_rs.m ncf_yxp_os.m
+3
+2d_interconnects matmul_systolic_os.m matmul_systolic_ws.m ncf_nmk.m

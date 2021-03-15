@@ -189,11 +189,12 @@ double Dataflow::GetTemporalReuseVolume(string tensor_name, AccessType type)
 	return rv;
 }
 
-double Dataflow::GetSpatialReuseVolume(string tensor_name, AccessType type)
+double Dataflow::GetSpatialReuseVolume(string tensor_name, AccessType type, isl_union_map *stt_neighbor)
 {
-	isl_union_map *stt_neighbor = MapSpaceTimeToNeighbor(1, false, 1, true, false);
+	if (stt_neighbor == NULL)
+		stt_neighbor = MapSpaceTimeToNeighbor(1, false, 1, true, false);
 	isl_union_map *stt_access = MapSpaceTimeToAccess(tensor_name, type);
-	isl_union_map *neighbor_access = isl_union_map_apply_range(stt_neighbor, isl_union_map_copy(stt_access));
+	isl_union_map *neighbor_access = isl_union_map_apply_range(isl_union_map_copy(stt_neighbor), isl_union_map_copy(stt_access));
 	isl_union_map *spatial_reuse = isl_union_map_intersect(stt_access, neighbor_access);
 	isl_union_pw_qpolynomial *spatial_reuse_num = isl_union_map_card(spatial_reuse);
 
@@ -201,7 +202,6 @@ double Dataflow::GetSpatialReuseVolume(string tensor_name, AccessType type)
 	spatial_reuse_num = isl_union_pw_qpolynomial_sum(spatial_reuse_num); // sum on space
 
 	double number = convert_upwqp_to_int(spatial_reuse_num);
-
 	int dsize = GetDomainSize();
 	double res = number / dsize;
 	return res;
@@ -292,15 +292,15 @@ double Dataflow::GetAverageActivePENum()
 	return avg_active_pe;
 }
 
-int Dataflow::GetIngressDelay(isl_union_map* space_time_to_neighbor)
+int Dataflow::GetIngressDelay(isl_union_map* space_time_to_neighbor, string tensor_name)
 {
-	long long ingress_volume = (long long)GetUniqueVolume("", READ, space_time_to_neighbor)*BIT_PER_ITEM;
+	long long ingress_volume = (long long)GetUniqueVolume(tensor_name, READ, space_time_to_neighbor)*BIT_PER_ITEM;
 	return ingress_volume / pe.GetBandwidth() + pe.GetAvgLatency() - 1;
 }
 
-int Dataflow::GetEgressDelay(isl_union_map* space_time_to_neighbor)
+int Dataflow::GetEgressDelay(isl_union_map* space_time_to_neighbor, string tensor_name)
 {
-	long long egress_volume = (long long)GetUniqueVolume("", WRITE, space_time_to_neighbor)*BIT_PER_ITEM;
+	long long egress_volume = (long long)GetUniqueVolume(tensor_name, WRITE, space_time_to_neighbor)*BIT_PER_ITEM;
 	return egress_volume / pe.GetBandwidth() + pe.GetAvgLatency() - 1;
 }
 

@@ -1,0 +1,16 @@
+# Ignore the build and lib dirs
+build
+lib/*
+
+# Ignore any executables
+bin/*
+
+#Ignore any external libraries
+external
+
+# Ignore Mac specific files
+.DS_Store
+
+# currently ignore python files and future works
+python
+future_work

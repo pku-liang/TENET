@@ -1,0 +1,5 @@
+conv2d.s 2
+3
+1d_interconnects conv2d_eyeriss1d.m conv2d_kp.m conv2d_nlr.m
+5
+2d_interconnects conv2d_eyeriss2d.m conv2d_os.m conv2d_os_yxp.m conv2d_os.m conv2d_ws.m

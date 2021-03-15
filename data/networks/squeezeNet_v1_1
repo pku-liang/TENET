@@ -1,0 +1,33 @@
+squeeze(num_outputs) {
+    conv2d(num_outputs, rx=1, ry=1, stride=1, padding='valid')
+}
+
+expand(num_outputs) {
+    e1x1 = conv2d(num_outputs, rx=1, ry=1, stride=1, padding = 'valid')
+    e3x3 = conv2d(num_outputs, rx=3, ry=3, padding = 'same')
+    concat() (e1x1,e3x3)
+}
+
+fire_module(squeeze_depth,expand_depth) {
+    net = _squeeze(squeeze_depth) (input)
+    net = _expand(expand_depth) (net)
+}
+
+
+result(num_classes) {
+    net = conv2d(c=96, [7, 7], stride=2)
+    net = max_pool2d(pool_size=(3, 3), stride=2) (net)
+    net = fire_module(16, 64) (net)
+    net = fire_module(16, 64) (net)
+    net = fire_module(32, 128) (net)
+    net = max_pool2d(pool_size=(3, 3), stride=2) (net)
+    net = fire_module(32, 128) (net)
+    net = fire_module(48, 192) (net)
+    net = fire_module(48, 192) (net)
+    net = fire_module(64, 256) (net)
+    net = max_pool2d(pool_size=(3, 3), stride=2) (net)
+    net = fire_module(64, 256) (net)
+    net = conv2d(c=num_classes, [1, 1], stride=1) (net)
+    net = avg_pool2d(pool_size=(13, 13), stride=1) (net)
+    logits = tf.squeeze([2]) (net)
+}
