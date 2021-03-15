@@ -1,0 +1,7 @@
+g++ -c -I include -I external/include -o build/pe_array.o src/pe_array.cpp
+g++ -c -I include -I external/include -o build/dataflow.o src/dataflow.cpp
+g++ -c -I include -I external/include -o build/stt.o src/stt.cpp
+g++ -c -I include -I external/include -o build/mapping.o src/mapping.cpp
+g++ -c -I include -I external/include -o build/statement.o src/statement.cpp
+g++ -I include -I external/include -L external/lib -lbarvinok -lisl -lntl -lgmp -lpolylibgmp build/pe_array.o build/dataflow.o build/stt.o build/mapping.o build/statement.o test/xxx -o bin/a.out
+g++: error: test/xxx: No such file or directory
