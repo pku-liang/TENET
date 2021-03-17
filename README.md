@@ -23,8 +23,13 @@ Experiment data of [our paper](#paper) is located in `data/`.
 Experiment codes are located in `test/`.
 ## Installation
 
-To install TENET, use the following command:
-
+To install TENET, use the following command:  
+1. Setup dependencies **optional**  
+(skip this step if you follow [instructions](https://repo.or.cz/w/barvinok.git/blob/HEAD:/README) by scratch.)
+```
+./init.sh
+```
+2. Build TENET
 ```
 make clean
 make all \
