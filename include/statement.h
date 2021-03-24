@@ -1,45 +1,71 @@
 #pragma once
 #include"stt.h"
 
-enum AccessType
+namespace TENET
+{
+
+enum class AccessType
 {
 	READ,
 	WRITE,
 	READ_OR_WRITE
-};
+}; // enum class Access Type
 
 class Access
 {
-	string tensor_name;
-	isl_union_map *access;
-	bool is_write;
 public:
 	friend class Statement;
-	Access(string tensor_name_, const char* access_str, bool is_write_);
-	Access(const Access & ac);
-	const Access &operator=(const Access & ac);
-	isl_union_map *GetAccess();
-	void PrintInfo();
-	~Access();
-};
+
+	Access(std::shared_ptr<ISL_Context> context);
+	Access(
+		std::shared_ptr<ISL_Context> context,
+		std::string tensor_name,
+		const char* access_str,
+		bool is_write_
+	);
+	isl_union_map *GetAccess() const noexcept
+	{return isl_union_map_copy(_access.get());}
+	void PrintInfo() const;
+
+	Access copy() const;
+private:
+	std::string _tensor_name;
+	isl_union_map_ptr _access;
+	bool _is_write{false};
+
+	std::shared_ptr<ISL_Context> _context;
+
+}; // class Access
 
 
 class Statement
 {
-	isl_union_set *domain;
-	std::vector<Access> read;
-	std::vector<Access> write;
 public:
-	Statement();
-	Statement(const char* statement_domain_str);
-	Statement(const Statement & st);
-	const Statement &operator=(const Statement &st);
-	~Statement();
-	void AddAccess(Access ac);
+	Statement(std::shared_ptr<ISL_Context> context);
+	Statement(
+		std::shared_ptr<ISL_Context> context,
+		const char* statement_domain_str
+	);
+
+	void AddAccess(Access &&ac);
 	bool Load(const char* filename);
-	isl_union_set *GetDomain();
-	isl_union_map *GetAccess(string tensor_name,
-		AccessType type);
-	void PrintInfo();
-	void GetTensorList(vector<string>& input, vector<string>& output);
+
+	isl_union_set *GetDomain() const
+	{return isl_union_set_copy(_domain.get());}
+
+	isl_union_map *GetAccess(std::string tensor_name, AccessType type) const;
+
+	void PrintInfo() const;
+
+	std::pair<std::vector<std::string>, std::vector<std::string>>
+	GetTensorList() const;
+
+	Statement copy() const;
+private:
+	isl_union_set_ptr _domain;
+	std::vector<Access> _read;
+	std::vector<Access> _write;
+	std::shared_ptr<ISL_Context> _context;
 };
+
+} // namespace TENET

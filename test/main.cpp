@@ -1,6 +1,9 @@
 #include"dataflow.h"
 #include<ctime>
 
+using namespace std;
+using namespace TENET;
+
 #define N_experiment 5
 #define EXPERIMENT 1
 #define Debug 0
@@ -9,22 +12,25 @@
 #define Test_Switch 0
 #define Compute_delay_and_pe_activity 1
 
-void DataflowAnalysis(const char* _pe_file, const char* _statement_file,
+void DataflowAnalysis(
+	shared_ptr<ISL_Context> context,
+	const char* _pe_file,
+	const char* _statement_file,
 	const char* _mapping_file)
 {
-	PEArray pe;
+	PEArray pe(context);
 	if (!pe.Load(_pe_file))
 	{
 		fprintf(stderr, "Load PE failed\n");
 		return;
 	}
-	Statement st;
+	Statement st(context);
 	if (!st.Load(_statement_file))
 	{
 		fprintf(stderr, "Load Statement failed\n");
 		return;
 	}
-	Mapping mp;
+	Mapping mp(context);
 	if (!mp.Load(_mapping_file))
 	{
 		fprintf(stderr, "Load Mapping failed\n");
@@ -35,9 +41,9 @@ void DataflowAnalysis(const char* _pe_file, const char* _statement_file,
 	st.PrintInfo();
 	mp.PrintInfo();
 #endif
-	Dataflow df(st, pe, mp);
-	vector<string> input, output;
-	st.GetTensorList(input, output);
+	auto [input, output] = st.GetTensorList();
+	Dataflow df(move(st), move(pe), move(mp)); // st, pe and mp is moved into df, DONT USE THEM AGAIN!
+
 	isl_union_map *space_time_to_neighbor = df.MapSpaceTimeToNeighbor();
 #if DEBUG
 	fprintf(stdout, "Space Domain:\n");
@@ -46,9 +52,10 @@ void DataflowAnalysis(const char* _pe_file, const char* _statement_file,
 	p = isl_printer_print_union_map(p, space_time_to_neighbor);
 	p = isl_printer_end_line(p);
 #endif
-	for (auto iter = input.begin(); iter != input.end(); iter++)
+	for (auto& iter : input)
 	{
-		double reuse_factor = df.GetReuseFactor(*iter, READ, isl_union_map_copy(space_time_to_neighbor));
+		double reuse_factor =
+			df.GetReuseFactor(iter, AccessType::READ, isl_union_map_copy(space_time_to_neighbor));
 		// double temporal_reuse = df.GetTemporalReuseVolume(*iter, READ);
 		// double spatial_reuse = df.GetSpatialReuseVolume(*iter, READ, NULL);
 #if Verbose
@@ -59,9 +66,10 @@ void DataflowAnalysis(const char* _pe_file, const char* _statement_file,
 		// fprintf(stdout, "%f %f\n", temporal_reuse, spatial_reuse);
 #endif
 	}
-	for (auto iter = output.begin(); iter != output.end(); iter++)
+	for (auto& iter : output)
 	{
-		double reuse_factor = df.GetReuseFactor(*iter, WRITE, isl_union_map_copy(space_time_to_neighbor));
+		double reuse_factor =
+			df.GetReuseFactor(iter, AccessType::WRITE, isl_union_map_copy(space_time_to_neighbor));
 		// double temporal_reuse = df.GetTemporalReuseVolume(*iter, WRITE);
 		// double spatial_reuse = df.GetSpatialReuseVolume(*iter, WRITE, NULL);
 #if Verbose
@@ -84,7 +92,7 @@ void DataflowAnalysis(const char* _pe_file, const char* _statement_file,
 	isl_union_map_free(space_time_to_neighbor);
 }
 
-int experiment(string experiment_file) {
+int experiment(shared_ptr<ISL_Context> context, string experiment_file) {
 #if ABSOLUTE_PATH
 	string prefix = "/mnt/d/WSL/sttAnalysis/sttAnalysis/data/";
 #else
@@ -105,7 +113,11 @@ int experiment(string experiment_file) {
 	getline(experiment,pe_array);
 	getline(experiment,statement);
 	// cout<<"----------     "<<experiment_file<<"     ---------------"<<endl;
-	DataflowAnalysis((prefix+pe_array).c_str(),(prefix+statement).c_str(),(prefix+mapping).c_str());
+	DataflowAnalysis(
+		context,
+		(prefix+pe_array).c_str(),
+		(prefix+statement).c_str(),
+		(prefix+mapping).c_str());
 	end=clock();
 	double endtime=(double)(end-start)/CLOCKS_PER_SEC;
 	// printf("Total time:%f\n",endtime);
@@ -121,9 +133,7 @@ int experiment(string experiment_file) {
 
 int main(int argc, char * argv[])
 {
-	ctx = isl_ctx_alloc();
-	p = isl_printer_to_file(ctx, stdout);
-	p = isl_printer_set_output_format(p, ISL_FORMAT_ISL);
+	shared_ptr<ISL_Context> context{make_shared<ISL_Context>(stdout)};
 #if EXPERIMENT
 #if ABSOLUTE_PATH
 	string experiment_prefix = "/mnt/d/WSL/sttAnalysis/sttAnalysis/experi/experiment_";
@@ -132,15 +142,13 @@ int main(int argc, char * argv[])
 #endif
 	for (int i=1; i<=N_experiment; i++) {
 		string experiment_file = experiment_prefix+to_string(i);
-		experiment(experiment_file);
+		experiment(context, experiment_file);
 	}
 #else
 	const char* pe_file = "/mnt/d/WSL/sttAnalysis/sttAnalysis/data/pe_array/systolic.p";
 	const char* mapping_file = "/mnt/d/WSL/sttAnalysis/sttAnalysis/data/mapping/conv2d_eyeriss2d.m";
 	const char* statement_file = "/mnt/d/WSL/sttAnalysis/sttAnalysis/data/statement/conv2d.s";
-	DataflowAnalysis(pe_file, statement_file, mapping_file, 3);
+	DataflowAnalysis(context, pe_file, statement_file, mapping_file, 3);
 #endif
-	isl_printer_free(p);
-	isl_ctx_free(ctx);
 	return 0;
 }
