@@ -1,43 +1,23 @@
 #include"mapping.h"
 
-Mapping::Mapping()
-{
-	space_map = NULL;
-	time_map = NULL;
-}
+using namespace std;
+using namespace TENET;
 
-Mapping::Mapping(const char* space_map_str, const char* time_map_str)
-{
-	space_map = isl_union_map_read_from_str(ctx, space_map_str);
-	time_map = isl_union_map_read_from_str(ctx, time_map_str);
-}
+Mapping::Mapping(shared_ptr<ISL_Context> context):
+	_context(context)
+{}
 
-Mapping::Mapping(const Mapping &mp)
-{
-	time_map = isl_union_map_copy(mp.time_map);
-	space_map = isl_union_map_copy(mp.space_map);
-}
+Mapping::Mapping(
+	shared_ptr<ISL_Context> context,
+	const char* space_map_str,
+	const char* time_map_str):
+	_space_map(isl_union_map_read_from_str(context->ctx(), space_map_str)),
+	_time_map(isl_union_map_read_from_str(context->ctx(), time_map_str)),
+	_context(context)
+{}
 
-const Mapping& Mapping::operator=(const Mapping& mp)
-{
-	if (time_map != NULL)
-		isl_union_map_free(time_map);
-	if (space_map != NULL)
-		isl_union_map_free(space_map);
-	time_map = isl_union_map_copy(mp.time_map);
-	space_map = isl_union_map_copy(mp.space_map);
-    return *this;
-}
-
-Mapping::~Mapping()
-{
-	if (time_map != NULL)
-		isl_union_map_free(time_map);
-	if (space_map != NULL)
-		isl_union_map_free(space_map);
-}
-
-bool Mapping::Load(const char* filename)
+bool
+Mapping::Load(const char* filename)
 {
 	ifstream input(filename);
 	if (!input.is_open())
@@ -46,36 +26,36 @@ bool Mapping::Load(const char* filename)
 	getline(input, space_map_str);
 	getline(input, time_map_str);
 	input.close();
-	if (time_map != NULL)
-		isl_union_map_free(time_map);
-	if (space_map != NULL)
-		isl_union_map_free(space_map);
-	space_map = isl_union_map_read_from_str(ctx, space_map_str.c_str());
-	time_map = isl_union_map_read_from_str(ctx, time_map_str.c_str());
+
+	_space_map.reset(
+		isl_union_map_read_from_str(_context->ctx(), space_map_str.c_str())
+	);
+	_time_map.reset(
+		isl_union_map_read_from_str(_context->ctx(), time_map_str.c_str())
+	);
 	return true;
 }
 
-isl_union_map *Mapping::GetSpaceMap()
+
+void
+Mapping::PrintInfo() const
 {
-	return isl_union_map_copy(space_map);
+	_context->printer(isl_printer_print_str, "SpaceMap:\n");
+	_context->printer(isl_printer_print_union_map, _space_map.get());
+	_context->printer(isl_printer_print_str, "\nTimeMap:\n");
+	_context->printer(isl_printer_print_union_map, _time_map.get());
+	_context->printer(isl_printer_end_line);
 }
 
-isl_union_map *Mapping::GetTimeMap()
+Mapping
+Mapping::copy() const
 {
-	return isl_union_map_copy(time_map);
-}
-
-isl_union_map *Mapping::GetSpaceTimeMap()
-{
-	return isl_union_map_range_product(isl_union_map_copy(space_map),
-		isl_union_map_copy(time_map));
-}
-
-void Mapping::PrintInfo()
-{
-	p = isl_printer_print_str(p, "SpaceMap:\n");
-	p = isl_printer_print_union_map(p, space_map);
-	p = isl_printer_print_str(p, "\nTimeMap:\n");
-	p = isl_printer_print_union_map(p, time_map);
-	p = isl_printer_end_line(p);
+	Mapping result(_context);
+	result._space_map.reset(
+		isl_union_map_copy(_space_map.get())
+	);
+	result._time_map.reset(
+		isl_union_map_copy(_time_map.get())
+	);
+	return result;
 }

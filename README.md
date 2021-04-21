@@ -35,6 +35,8 @@ make clean
 make all \
 MAIN=[entry file name] #the file should be placed under test/ directory \
 TARGET=[target executable]
+LIB_DIR=[library directory]
+INCLUDE_DIR=[include directory]
 ```
 After the build, the object files are stored in `build/`, while target executables in `bin`.
 ```
@@ -44,8 +46,8 @@ bin/[executable]
 commands below reproduce AlexNet reuse factor experiment of our paper.
 ```
 make clean
-make all MAIN=main.cpp TARGET=alexnet_layers
-bin/alexnet_layers
+make all MAIN=main.cpp TARGET=alexnet
+bin/alexnet
 ```
 ## Papers
 <span id="paper"></span>
