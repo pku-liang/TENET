@@ -182,4 +182,5 @@ Statement::copy() const
 {
 	Statement result{_context};
 	result._domain.reset(isl_union_set_copy(_domain.get()));
+	return result;
 }

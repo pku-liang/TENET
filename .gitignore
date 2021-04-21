@@ -112,3 +112,5 @@ Makefile
 *.ou
 
 .vscode/
+
+config.h
