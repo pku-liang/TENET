@@ -56,6 +56,6 @@ bin/alexnet
     @inproceedings{lu2021tenet,
       title={TENET: A Framework for Modeling Tensor Dataflow Based on Relation-centric Notation},
       author={Lu, Liqiang and Guan, Naiqing and Wang, Yuyue and Jia, Liancheng and Luo, Zizhang and Yin, Jieming and Cong, Jason and Liang, Yun},
-      booktitle={2021 ACM/IEEE 48rd Annual International Symposium on Computer Architecture (ISCA)},
+      booktitle={2021 ACM/IEEE 48th Annual International Symposium on Computer Architecture (ISCA)},
       year={2021}
     }
