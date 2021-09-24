@@ -114,3 +114,4 @@ Makefile
 .vscode/
 
 config.h
+.clang-format

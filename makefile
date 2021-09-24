@@ -18,6 +18,10 @@ MAIN = main.cpp
 TARGET = alexnet
 LOG = $(TARGET)_log
 
+HASCO = HASCO_interface.cpp
+HASCO_TARGET = HASCO_interface
+HASCO_LOG = ${HASCO_TARGET}_log
+
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(BUILDDIR)
 	@echo "compile $< into object file..."
@@ -38,4 +42,11 @@ all: $(OBJECTS)
 	@echo "#define EXPERIMENT_PREFIX \"${TARGET}\"" > config.h
 	@echo "$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(MAIN) -o $(BINDIR)/$(TARGET) $(LIB) " > $(LOG)
 	@$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(MAIN) -o $(BINDIR)/$(TARGET) $(LIB) >> $(LOG) 2>&1
+
+HASCO: $(OBJECTS)
+	@mkdir -p $(BINDIR)
+	@echo "compile entry file and link with tenet and external library..."
+	@echo "$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(HASCO) -o $(BINDIR)/$(HASCO_TARGET) $(LIB) " > ${HASCO_LOG}
+	@$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(HASCO) -o $(BINDIR)/$(HASCO_TARGET) $(LIB) >> ${HASCO_LOG} 2>&1
+
 .PHONY: clean all

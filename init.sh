@@ -1,3 +1,4 @@
+#!/bin/bash
 ################################################
 # This script build all the dependency         #
 # for you which include gmp, ntl, barvinok     #
