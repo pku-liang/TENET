@@ -18,6 +18,10 @@ MAIN = main.cpp
 TARGET = alexnet
 LOG = $(TARGET)_log
 
+CLI = cli.cpp
+CLI_TARGET = tenet
+CLI_LOG = $(CLI_TARGET)_log
+
 HASCO = HASCO_interface.cpp
 HASCO_TARGET = HASCO_interface
 HASCO_LOG = ${HASCO_TARGET}_log
@@ -43,9 +47,15 @@ all: $(OBJECTS)
 	@echo "$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(MAIN) -o $(BINDIR)/$(TARGET) $(LIB) " > $(LOG)
 	@$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(MAIN) -o $(BINDIR)/$(TARGET) $(LIB) >> $(LOG) 2>&1
 
+cli: $(OBJECTS)
+	@mkdir -p $(BINDIR)
+	@echo "compile command line interface and link with tenet and external library..."
+	@echo "$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(CLI) -o $(BINDIR)/$(CLI_TARGET) $(LIB) " > $(CLI_LOG)
+	@$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(CLI) -o $(BINDIR)/$(CLI_TARGET) $(LIB) >> $(CLI_LOG) 2>&1
+
 HASCO: $(OBJECTS)
 	@mkdir -p $(BINDIR)
-	@echo "compile entry file and link with tenet and external library..."
+	@echo "compile HASCO Interface and link with tenet and external library..."
 	@echo "$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(HASCO) -o $(BINDIR)/$(HASCO_TARGET) $(LIB) " > ${HASCO_LOG}
 	@$(CC) $(STD) $(INC) $(LOAD) $(OBJECTS) $(TESTDIR)/$(HASCO) -o $(BINDIR)/$(HASCO_TARGET) $(LIB) >> ${HASCO_LOG} 2>&1
 
