@@ -117,5 +117,4 @@ config.h
 .clang-format
 .gitignore
 
-test_data/*
 test.csv
