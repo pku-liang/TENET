@@ -54,4 +54,4 @@ cd ..
 echo "Remove NTL and Barvinok Package"
 rm -rf barvinok ntl
 
-echo "export LD_LIBRARY_PATH=`pwd`/external/lib:\${LD_LIBRARY_PATH}" >> ~/.bashrc
+echo "export LD_LIBRARY_PATH=`pwd`/lib:\${LD_LIBRARY_PATH}" >> ~/.bashrc
