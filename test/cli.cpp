@@ -90,13 +90,14 @@ void DataflowAnalysis(shared_ptr<ISL_Context> context, const char* expName, cons
     int ingress_delay     = df.GetIngressDelay(isl_union_map_copy(space_time_to_neighbor));
     int egress_delay      = df.GetEgressDelay(isl_union_map_copy(space_time_to_neighbor));
     int computation_delay = df.GetComputationDelay();
-    fprintf(stdout, "[TENET] Delay: In: %d; Out: %d; Com: %d\n", ingress_delay, egress_delay, computation_delay);
+    fprintf(stdout, "[TENET] Delay: In: %d cycles; Out: %d cycles; Com: %d cycles\n", ingress_delay, egress_delay,
+            computation_delay);
     if (out.fout.is_open())
         out.fout << ingress_delay << "," << egress_delay << "," << computation_delay << ",";
 
     int    dsize     = df.GetActivePENum();
     double avg_dsize = df.GetAverageActivePENum();
-    fprintf(stdout, "[TENET] Active PE Num: %d; Average: %.2f\n", dsize, avg_dsize);
+    fprintf(stdout, "[TENET] Active PE Num: %d pes; Average: %.2f pes\n", dsize, avg_dsize);
     if (out.fout.is_open())
         out.fout << dsize << "," << avg_dsize << ",";
 
@@ -107,9 +108,12 @@ void DataflowAnalysis(shared_ptr<ISL_Context> context, const char* expName, cons
             double spatial_reuse  = df.GetSpatialReuseVolume(iter, AccessType::READ, NULL);
             int    totalVolume    = df.GetTotalVolume(iter, AccessType::READ);
             int uniqueVolume = df.GetUniqueVolume(iter, AccessType::READ, isl_union_map_copy(space_time_to_neighbor));
-            fprintf(stdout, "[TENET] Input Tensor: %s\n[TENET]     Reuse Factor: %.2f\n", iter.c_str(), reuse_factor);
-            fprintf(stdout, "[TENET]     temporal: %f\n[TENET]     spatial: %f\n", temporal_reuse, spatial_reuse);
-            fprintf(stdout, "[TENET]     TotalVolume: %d\n[TENET]     UniqueVolume: %d\n", totalVolume, uniqueVolume);
+            fprintf(stdout, "[TENET] Input Tensor: %s\n[TENET]     Reuse Factor: %.2f times\n", iter.c_str(),
+                    reuse_factor);
+            fprintf(stdout, "[TENET]     Temporal reuse rate: %f\n[TENET]     Spatial reuse rate: %f\n", temporal_reuse,
+                    spatial_reuse);
+            fprintf(stdout, "[TENET]     TotalVolume: %d elements\n[TENET]     UniqueVolume: %d elements\n",
+                    totalVolume, uniqueVolume);
             if (out.fout.is_open()) {
                 out.fout << setprecision(2) << reuse_factor << ",";
                 out.fout << temporal_reuse << ",";
@@ -124,9 +128,12 @@ void DataflowAnalysis(shared_ptr<ISL_Context> context, const char* expName, cons
             double spatial_reuse  = df.GetSpatialReuseVolume(iter, AccessType::WRITE, NULL);
             int    totalVolume    = df.GetTotalVolume(iter, AccessType::WRITE);
             int uniqueVolume = df.GetUniqueVolume(iter, AccessType::WRITE, isl_union_map_copy(space_time_to_neighbor));
-            fprintf(stdout, "[TENET] Output Tensor: %s\n[TENET]     Reuse Factor: %.2f\n", iter.c_str(), reuse_factor);
-            fprintf(stdout, "[TENET]     temporal: %f\n[TENET]     spatial: %f\n", temporal_reuse, spatial_reuse);
-            fprintf(stdout, "[TENET]     TotalVolume: %d\n[TENET]     UniqueVolume: %d\n", totalVolume, uniqueVolume);
+            fprintf(stdout, "[TENET] Output Tensor: %s\n[TENET]     Reuse Factor: %.2f times\n", iter.c_str(),
+                    reuse_factor);
+            fprintf(stdout, "[TENET]     Temporal reuse rate: %f\n[TENET]     Spatial reuse rate: %f\n", temporal_reuse,
+                    spatial_reuse);
+            fprintf(stdout, "[TENET]     TotalVolume: %d elements\n[TENET]     UniqueVolume: %d elements\n",
+                    totalVolume, uniqueVolume);
             if (out.fout.is_open()) {
                 out.fout << setprecision(2) << reuse_factor << ",";
                 out.fout << temporal_reuse << ",";
