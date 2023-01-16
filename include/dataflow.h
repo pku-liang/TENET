@@ -51,7 +51,7 @@ public:
 		isl_union_map* space_time_to_neighbor);
 	int GetL2Write(std::string tensor_name, AccessType type,
 		isl_union_map* space_time_to_neighbor);
-	int GetEnergy(isl_union_map* space_time_to_neighbor);
+	unsigned long long GetEnergy(isl_union_map* space_time_to_neighbor);
 
 	Dataflow copy() const;
 

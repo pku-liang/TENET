@@ -339,9 +339,9 @@ int Dataflow::GetL2Write(string tensor_name, AccessType type, isl_union_map *spa
                + GetUniqueVolume(tensor_name, AccessType::WRITE, space_time_to_neighbor);
 }
 
-int Dataflow::GetEnergy(isl_union_map *space_time_to_neighbor)
+unsigned long long Dataflow::GetEnergy(isl_union_map *space_time_to_neighbor)
 {
-    int energy           = GetMacNum();  // energy cost of MAC
+    unsigned long long energy           = GetMacNum();  // energy cost of MAC
     auto [input, output] = _st.GetTensorList();
     for (auto &iter : input) {
         energy += l1_multiplier * GetL1Read(iter, AccessType::READ);
