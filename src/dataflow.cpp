@@ -247,7 +247,7 @@ int Dataflow::GetMacNumPerPE(int mac_per_instance)
     int mac_num = GetMacNum(mac_per_instance);
     // use GetSpaceDomain instead of pe.Getdomain() here in case some pes
     // are idle
-    int dsize = GetPENum();
+    int dsize = GetAverageActivePENum();
     return mac_num / dsize;
 }
 
