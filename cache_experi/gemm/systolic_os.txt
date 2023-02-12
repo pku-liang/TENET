@@ -1,0 +1,2 @@
+{S[i,j,k]->PE[i%4, j%4]}
+{S[i,j,k]->T[floor(i/4), floor(floor(k/4)/2), floor(j/4), floor(k/4)%2, i%4+j%4+k%4]}

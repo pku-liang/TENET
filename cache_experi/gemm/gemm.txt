@@ -1,0 +1,6 @@
+3 1
+{S[i,j,k]:0<=i<16 and 0<=j<16 and 0<=k<16}
+{S[i,j,k]->C[i,j]}
+{S[i,j,k]->A[i,k]}
+{S[i,j,k]->B[j,k]}
+{S[i,j,k]->C[i,j]}

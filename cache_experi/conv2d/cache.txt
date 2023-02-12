@@ -1,0 +1,10 @@
+3
+I 12 12
+{M_I[x,y]:0<=x<10 and 0<=y<10}
+{I[c,x,y]->M_I[x%10,y%10]}
+O 8 8
+{M_O[x,y]:0<=x<8 and 0<=y<8}
+{O[k,ox,oy]->M_O[ox%8,oy%8]}
+W 3 9
+{M_W[c,x,y]:0<=c<3 and 0<=x<3 and 0<=y<3}
+{W[k,c,rx,ry]->M_W[c,rx,ry]}
