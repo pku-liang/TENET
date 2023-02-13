@@ -115,6 +115,7 @@ isl_union_map *Dataflow::MapSpaceTimeToNeighbor(unsigned space_distance, bool sp
 {
     isl_union_map *space_to_neighbor      = MapSpaceToNeighbor(space_distance, space_is_range);
     isl_union_map *time_to_neighbor       = MapTimeToPrev(time_distance, time_is_range);
+    time_to_neighbor = isl_union_map_reverse(time_to_neighbor);
     isl_union_map *space_time_to_neighbor = isl_union_map_product(space_to_neighbor, time_to_neighbor);
     if (include_self == false) {
         isl_union_map *space_time_identity = isl_union_set_identity(GetSpaceTimeDomain());
